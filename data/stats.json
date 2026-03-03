@@ -1,0 +1,46 @@
+{
+  "history": [
+    {
+      "date": "2026-03-02",
+      "words_today": 0,
+      "correct_today": 0,
+      "time_spent": 1545
+    },
+    {
+      "date": "2026-02-27",
+      "words_today": 4,
+      "correct_today": 1,
+      "time_spent": 3324
+    },
+    {
+      "date": "2026-02-26",
+      "words_today": 5,
+      "correct_today": 1,
+      "time_spent": 5602
+    },
+    {
+      "date": "2026-02-25",
+      "words_today": 11,
+      "correct_today": 1,
+      "time_spent": 9159
+    },
+    {
+      "date": "2026-02-24",
+      "words_today": 3,
+      "correct_today": 1,
+      "time_spent": 787
+    },
+    {
+      "date": "2026-02-23",
+      "words_today": 60,
+      "correct_today": 44,
+      "time_spent": 2398
+    }
+  ],
+  "current": {
+    "date": "2026-03-02",
+    "words_today": 0,
+    "correct_today": 0,
+    "time_spent": 1545
+  }
+}

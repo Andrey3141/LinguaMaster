@@ -1,0 +1,35 @@
+{
+  "language": "en",
+  "native_language": "ru",
+  "difficulty": "all",
+  "current_category": "Производство продукции и организация общественного питания",
+  "learning_method": "image",
+  "app_settings": {
+    "default_language": "en",
+    "native_language": "ru",
+    "quick_training_words": 10,
+    "hard_word_threshold": 50,
+    "easy_word_threshold": 80,
+    "auto_advance": true,
+    "show_hints": true,
+    "prevent_repeats": true,
+    "enabled": true,
+    "auto_speak": true,
+    "volume": 100,
+    "speed": 2.0,
+    "selected_voices": {
+      "ru": "anna",
+      "en": "en-US-JennyNeural",
+      "es": "es-ES-ElviraNeural",
+      "fr": "fr-FR-DeniseNeural",
+      "de": "de-DE-KatjaNeural",
+      "zh": "zh-CN-XiaoxiaoNeural",
+      "ja": "ja-JP-NanamiNeural",
+      "ko": "ko-KR-SunHiNeural",
+      "pt": "pt-BR-FranciscaNeural",
+      "it": "it-IT-ElsaNeural",
+      "ar": "ar-EG-SalmaNeural"
+    },
+    "hint_threshold": 1
+  }
+}
