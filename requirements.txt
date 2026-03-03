@@ -1,0 +1,9 @@
+# Основные зависимости с фиксированными версиями
+Pillow==10.1.0           # Работа с изображениями
+pygame==2.5.2            # Воспроизведение аудио
+edge-tts==6.1.3          # Озвучка через Microsoft Edge-TTS
+
+# Примечание: RHVoice устанавливается отдельно через системный пакетный менеджер
+# Для Ubuntu/Debian: sudo apt-get install rhvoice
+# Для Arch Linux: sudo pacman -S rhvoice
+# Для других систем: https://github.com/RHVoice/RHVoice
