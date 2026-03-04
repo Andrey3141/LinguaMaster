@@ -173,9 +173,8 @@ python main.py
 
 ## 📧 Контакты
 
-Автор: [Скачков Андрей Юрьевич]
-Email: [askachkov08@gmail.com]
-GitHub: [https://github.com/Andrey3141]
+✅ Автор: Andrey S.
+✅ Контакты: [GitHub Profile](https://github.com/Andrey3141) | [Telegram](https://t.me/@tools271)
 
 ## 🙏 Благодарности
 
