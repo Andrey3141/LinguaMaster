@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Приложение
+*.exe
+*.log
+.env
+
+# Данные пользователей (опционально)
+data/*.json
+
+# ОС
+.DS_Store
+Thumbs.db
