@@ -23,6 +23,7 @@
 - [🎮 Использование](#-использование)
 - [🛠 Технологии](#-технологии)
 - [🌍 Языки](#-языки)
+- [📱 Другие платформы](#-другие-платформы)
 - [🔧 Решение проблем](#-решение-проблем)
 - [📄 Лицензия](#-лицензия)
 - [📬 Контакты](#-контакты)
@@ -153,6 +154,18 @@ sudo pacman -S rhvoice
 
 | 🇺🇸 EN | 🇷🇺 RU | 🇪🇸 ES | 🇫🇷 FR | 🇩🇪 DE | 🇨🇳 ZH | 🇯🇵 JA | 🇰🇷 KO | 🇵🇹 PT | 🇮🇹 IT | 🇸🇦 AR |
 |---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
+
+</div>
+
+---
+
+<div align="center">
+
+## 📱 Доступно на других платформах
+
+| 🖥️ Desktop | 📱 Android |
+|-----------|-----------|
+| [![Python](https://img.shields.io/badge/Windows/Linux/macOS-3776AB?logo=python)](https://github.com/Andrey3141/LinguaMaster) | [![Kotlin](https://img.shields.io/badge/Android-000000?logo=android&logoColor=white)](https://github.com/Andrey3141/LinguaMaster-Android) |
 
 </div>
 
