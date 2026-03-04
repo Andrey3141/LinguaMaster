@@ -1,6 +1,12 @@
 {
   "history": [
     {
+      "date": "2026-03-04",
+      "words_today": 1,
+      "correct_today": 0,
+      "time_spent": 267
+    },
+    {
       "date": "2026-03-02",
       "words_today": 0,
       "correct_today": 0,
@@ -38,9 +44,9 @@
     }
   ],
   "current": {
-    "date": "2026-03-02",
-    "words_today": 0,
+    "date": "2026-03-04",
+    "words_today": 1,
     "correct_today": 0,
-    "time_spent": 1545
+    "time_spent": 267
   }
 }

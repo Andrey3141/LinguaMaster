@@ -553,11 +553,11 @@
     "category": "Производство продукции и организация общественного питания",
     "image": "cook.jpg",
     "added_date": "2026-02-27",
-    "last_review": null,
-    "review_count": 0,
+    "last_review": "2026-03-04 19:39:37.416904",
+    "review_count": 1,
     "correct_count": 0,
-    "incorrect_count": 0,
-    "difficulty": 50
+    "incorrect_count": 1,
+    "difficulty": 40
   },
   {
     "foreign": "boil",
