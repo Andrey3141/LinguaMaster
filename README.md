@@ -22,11 +22,11 @@
 - [📥 Установка и запуск](#-установка-и-запуск)
 - [🎮 Использование](#-использование)
 - [🛠 Технологии](#-технологии)
-- [🌍 Языки](#-языки)
-- [📱 Другие платформы](#-другие-платформы)
+- [🌍 Языки](#-поддерживаемые-языки)
+- [📱 Другие платформы](#-доступно-на-других-платформах)
 - [🔧 Решение проблем](#-решение-проблем)
 - [📄 Лицензия](#-лицензия)
-- [📬 Контакты](#-контакты)
+- [📬 Контакты](#-контакты-и-поддержка)
 
 ---
 
@@ -165,7 +165,7 @@ sudo pacman -S rhvoice
 
 | 🖥️ Desktop | 📱 Android |
 |-----------|-----------|
-| [![Python](https://img.shields.io/badge/Windows/Linux/macOS-3776AB?logo=python)](https://github.com/Andrey3141/LinguaMaster) | [![Kotlin](https://img.shields.io/badge/Android-000000?logo=android&logoColor=white)](https://github.com/Andrey3141/LinguaMaster-Android) |
+| [![Python](https://img.shields.io/badge/Windows/Linux-3776AB?logo=python)](https://github.com/Andrey3141/LinguaMaster) | [![Kotlin](https://img.shields.io/badge/Android-000000?logo=android&logoColor=white)](https://github.com/Andrey3141/LinguaMaster-Android) |
 
 </div>
 
