@@ -743,7 +743,7 @@
   },
   {
     "foreign": "不",
-    "translation": "нет/не",
+    "translation": ["нет", "не"],
     "language": "zh",
     "native_language": "ru",
     "category": "Изучение китайского",
@@ -757,7 +757,7 @@
   },
   {
     "foreign": "是",
-    "translation": "быть/являться/да",
+    "translation": ["быть", "являться", "да"],
     "language": "zh",
     "native_language": "ru",
     "category": "Изучение китайского",

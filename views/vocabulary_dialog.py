@@ -1,3 +1,5 @@
+# views/vocabulary_dialog.py (исправленная версия)
+
 """
 Диалоговое окно словаря с сортировкой и фильтрацией
 """
@@ -116,7 +118,7 @@ class VocabularyDialog:
         scrollbar = ttk.Scrollbar(tree_frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        # Определяем столбцы - добавили колонку "Переводы"
+        # Определяем столбцы
         columns = ('foreign', 'translations', 'study_language', 'native_language', 'category', 'difficulty')
         
         # Создаем таблицу
@@ -134,7 +136,7 @@ class VocabularyDialog:
         # Настраиваем колонки с сортировкой
         columns_config = [
             ('foreign', 'Иностранное слово', 200),
-            ('translations', 'Перевод(ы)', 300),  # Увеличили ширину для списка переводов
+            ('translations', 'Перевод(ы)', 300),
             ('study_language', 'Изучаемый язык', 150),
             ('native_language', 'Родной язык', 150),
             ('category', 'Категория', 150),
@@ -187,6 +189,34 @@ class VocabularyDialog:
         )
         filter_info.pack(side=tk.LEFT, padx=(10, 0))
         
+        # ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ФОРМАТИРОВАНИЯ ПЕРЕВОДОВ =====
+        def format_translations(word):
+            """Безопасно форматирует переводы для отображения"""
+            translations = word.get('translations', [])
+            
+            # Если translations - список списков (ошибочный формат)
+            if translations and isinstance(translations[0], list):
+                # Распаковываем двойной список
+                flat_list = []
+                for item in translations:
+                    if isinstance(item, list):
+                        flat_list.extend(item)
+                    else:
+                        flat_list.append(item)
+                translations = flat_list
+            
+            # Если translations не список, а строка
+            if isinstance(translations, str):
+                translations = [translations]
+            
+            # Если список пуст, пробуем взять старое поле translation
+            if not translations and 'translation' in word:
+                translations = [word['translation']]
+            
+            # Возвращаем строку через запятую
+            return ', '.join(translations) if translations else ''
+        # ===== КОНЕЦ ИСПРАВЛЕНИЯ =====
+        
         def load_data():
             """Загружает данные в Treeview"""
             # Очищаем таблицу
@@ -225,14 +255,8 @@ class VocabularyDialog:
                 category = word.get('category', "Основные")
                 difficulty = f"{word['difficulty']}%"
                 
-                # ===== ИЗМЕНЕНИЕ: показываем все переводы через запятую =====
-                if 'translations' in word and word['translations']:
-                    translations_display = ', '.join(word['translations'])
-                elif 'translation' in word:
-                    translations_display = word['translation']
-                else:
-                    translations_display = ''
-                # ===== КОНЕЦ ИЗМЕНЕНИЯ =====
+                # Используем безопасную функцию форматирования
+                translations_display = format_translations(word)
                 
                 tree.insert('', 'end', values=(
                     word['foreign'],
