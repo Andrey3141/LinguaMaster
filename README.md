@@ -1,6 +1,6 @@
 <div align="center">
   
-# 🌍 LinguaMaster v1.13.1
+# 🌍 LinguaMaster v1.14.0
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)

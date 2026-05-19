@@ -20,7 +20,7 @@ class VocabularyDialog:
         
         dialog = tk.Toplevel(controller.root)
         dialog.title("📖 Словарь")
-        dialog.geometry("1000x650")
+        dialog.geometry("1100x650")
         dialog.configure(bg=config.COLORS['bg_dark'])
         dialog.transient(controller.root)
         
@@ -116,8 +116,8 @@ class VocabularyDialog:
         scrollbar = ttk.Scrollbar(tree_frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        # Определяем столбцы
-        columns = ('foreign', 'translation', 'study_language', 'native_language', 'category', 'difficulty')
+        # Определяем столбцы - добавили колонку "Переводы"
+        columns = ('foreign', 'translations', 'study_language', 'native_language', 'category', 'difficulty')
         
         # Создаем таблицу
         tree = ttk.Treeview(
@@ -134,7 +134,7 @@ class VocabularyDialog:
         # Настраиваем колонки с сортировкой
         columns_config = [
             ('foreign', 'Иностранное слово', 200),
-            ('translation', 'Перевод', 200),
+            ('translations', 'Перевод(ы)', 300),  # Увеличили ширину для списка переводов
             ('study_language', 'Изучаемый язык', 150),
             ('native_language', 'Родной язык', 150),
             ('category', 'Категория', 150),
@@ -149,6 +149,8 @@ class VocabularyDialog:
             
             if col == 'difficulty':
                 data.sort(key=lambda x: int(x[0].replace('%', '')), reverse=reverse)
+            elif col == 'translations':
+                data.sort(key=lambda x: x[0].lower(), reverse=reverse)
             else:
                 data.sort(key=lambda x: x[0].lower(), reverse=reverse)
             
@@ -223,9 +225,18 @@ class VocabularyDialog:
                 category = word.get('category', "Основные")
                 difficulty = f"{word['difficulty']}%"
                 
+                # ===== ИЗМЕНЕНИЕ: показываем все переводы через запятую =====
+                if 'translations' in word and word['translations']:
+                    translations_display = ', '.join(word['translations'])
+                elif 'translation' in word:
+                    translations_display = word['translation']
+                else:
+                    translations_display = ''
+                # ===== КОНЕЦ ИЗМЕНЕНИЯ =====
+                
                 tree.insert('', 'end', values=(
                     word['foreign'],
-                    word['translation'],
+                    translations_display,
                     study_lang_name,
                     native_lang_name,
                     category,
@@ -239,11 +250,10 @@ class VocabularyDialog:
         # Первоначальная загрузка данных
         load_data()
         
-        # ===== ИСПРАВЛЕНО: Кнопка закрытия большая по вертикали =====
+        # Кнопка закрытия
         button_frame = tk.Frame(main_frame, bg=config.COLORS['bg_dark'])
         button_frame.pack(fill=tk.X, pady=20)
         
-        # Создаем кнопку с явным указанием размера
         close_button = tk.Button(
             button_frame,
             text="Закрыть",
@@ -253,11 +263,9 @@ class VocabularyDialog:
             bd=2,
             relief=tk.RAISED,
             padx=30,
-            pady=20,        # увеличенный вертикальный отступ
+            pady=20,
             cursor='hand2',
             command=on_closing
         )
         close_button.pack()
-        
-        # Принудительно устанавливаем высоту кнопки
-        close_button.config(height=3)  # высота в текстовых строках
+        close_button.config(height=3)

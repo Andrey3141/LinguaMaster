@@ -3,6 +3,7 @@
 """
 
 import tkinter as tk
+import random
 from config import config
 from utils.animations import animate_success, animate_error
 from utils.speech import speech_synth
@@ -79,7 +80,7 @@ class TestPanel:
         )
         self.word_label.pack(side=tk.LEFT, padx=(0, 10))
         
-        # ===== НОВОЕ: Кнопка динамика для озвучки в тестовом режиме =====
+        # Кнопка динамика для озвучки в тестовом режиме
         self.speaker_button = tk.Button(
             self.word_frame,
             text="🔊",
@@ -99,7 +100,6 @@ class TestPanel:
         self.speaker_button.bind('<Enter>', self._on_speaker_hover)
         self.speaker_button.bind('<Leave>', self._on_speaker_leave)
         self.speaker_normal_bg = config.COLORS['speaker']
-        # ===== КОНЕЦ НОВОГО КОДА =====
         
         # Подсказка
         self.hint_label = tk.Label(
@@ -178,14 +178,73 @@ class TestPanel:
         else:
             self.hint_label.config(text="Выберите правильный перевод:")
         
-        # ===== НОВОЕ: Автоматическая озвучка, если включена =====
+        # Автоматическая озвучка, если включена
         if (word and "Нет слов" not in word and 
             word_obj and 
             speech_synth.enabled and 
             self.controller.settings.get('auto_speak', False)):
-            # Небольшая задержка, чтобы интерфейс обновился
             self.controller.root.after(100, self.speak_current_word)
-        # ===== КОНЕЦ НОВОГО КОДА =====
+    
+    def generate_test_options(self, current_word, all_words, study_lang, native_lang):
+        """
+        Генерирует варианты ответов для теста
+        
+        Args:
+            current_word: Текущее слово
+            all_words: Все слова
+            study_lang: Изучаемый язык
+            native_lang: Родной язык
+            
+        Returns:
+            list: Список вариантов ответов
+        """
+        options = set()
+        
+        # Определяем правильный ответ
+        if current_word['language'] == study_lang and current_word['native_language'] == native_lang:
+            # Вопрос: иностранное слово -> нужен перевод
+            if 'translations' in current_word and current_word['translations']:
+                correct = current_word['translations'][0]
+            else:
+                correct = current_word.get('translation', '')
+        else:
+            # Вопрос: перевод -> нужно иностранное слово
+            correct = current_word['foreign']
+        
+        options.add(correct)
+        
+        # Добавляем случайные варианты из других слов
+        other_words = [w for w in all_words if w != current_word]
+        random.shuffle(other_words)
+        
+        for word in other_words[:5]:
+            if len(options) >= 3:
+                break
+            
+            if current_word['language'] == study_lang and current_word['native_language'] == native_lang:
+                if 'translations' in word and word['translations']:
+                    option = word['translations'][0]
+                else:
+                    option = word.get('translation', '')
+            else:
+                option = word['foreign']
+            
+            if option and option != correct:
+                options.add(option)
+        
+        # Если вариантов меньше 3, добавляем заглушки
+        if len(options) < 3:
+            placeholders = ["???", "_____", "*****"]
+            for p in placeholders:
+                if len(options) >= 3:
+                    break
+                if p not in options:
+                    options.add(p)
+        
+        options_list = list(options)
+        random.shuffle(options_list)
+        
+        return options_list[:3]
     
     def check_answer(self, option_index):
         """Проверяет выбранный вариант"""
@@ -206,13 +265,11 @@ class TestPanel:
         """Показывает результат ответа"""
         if is_correct:
             animate_success(self.word_card)
-            # Подсвечиваем правильный ответ зеленым
             for btn in self.option_buttons:
                 if btn['text'] == correct_answer:
                     btn.config(bg=config.COLORS['success'])
         else:
             animate_error(self.word_card)
-            # Подсвечиваем правильный ответ зеленым, а неправильные красным
             for btn in self.option_buttons:
                 if btn['text'] == correct_answer:
                     btn.config(bg=config.COLORS['success'])
@@ -237,7 +294,6 @@ class TestPanel:
         native_flag = config.LANGUAGES[self.controller.native_language]['flag']
         self.mode_label.config(text=f"{study_flag} → {native_flag}")
     
-    # ===== НОВЫЙ МЕТОД: Озвучка текущего слова =====
     def speak_current_word(self):
         """Озвучивает текущее слово"""
         if not speech_synth.enabled:
@@ -246,28 +302,23 @@ class TestPanel:
         if not self.current_display_word or not self.current_word_obj:
             return
         
-        # Определяем язык отображаемого слова
         if self.current_display_word == self.current_word_obj['foreign']:
             lang = self.current_word_obj['language']
         else:
             lang = self.current_word_obj['native_language']
         
-        # Временно делаем кнопку неактивной во время озвучки
         self.speaker_button.config(state='disabled', bg=config.COLORS['speaker_disabled'])
         
         def on_speech_complete(success):
-            # Возвращаем кнопке нормальное состояние после озвучки
             if (self.current_display_word and 
                 "Нет слов" not in self.current_display_word and 
                 self.current_word_obj and 
                 speech_synth.enabled):
                 self.speaker_button.config(state='normal', bg=self.speaker_normal_bg)
             else:
-                # Если условия не выполняются, оставляем disabled
                 self.speaker_button.config(state='disabled', bg=config.COLORS['speaker_disabled'])
         
         speech_synth.speak_async(self.current_display_word, lang, callback=on_speech_complete)
-    # ===== КОНЕЦ НОВОГО МЕТОДА =====
     
     def pack(self, **kwargs):
         """Упаковка панели"""

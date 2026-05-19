@@ -1,3 +1,4 @@
+# файл: views/widgets.py (только изменённый класс ModernButton, остальное без изменений)
 """
 Кастомные виджеты для приложения
 """
@@ -20,6 +21,9 @@ class ModernButton(tk.Button):
         self.hover_color = kwargs.pop('hover_color', config.COLORS['primary'])
         self.original_color = kwargs.get('bg', config.COLORS['bg_card'])
         
+        # Сохраняем исходный цвет текста
+        self.original_fg = kwargs.get('fg', config.COLORS['text'])
+        
         # Базовые стили
         kwargs.setdefault('bd', 0)
         kwargs.setdefault('cursor', 'hand2')
@@ -35,11 +39,11 @@ class ModernButton(tk.Button):
     
     def on_enter(self, event):
         """Обработчик наведения мыши"""
-        self.config(bg=self.hover_color)
+        self.config(bg=self.hover_color, fg=config.COLORS['text'])
     
     def on_leave(self, event):
         """Обработчик ухода мыши"""
-        self.config(bg=self.original_color)
+        self.config(bg=self.original_color, fg=self.original_fg)
     
     def on_press(self, event):
         """Обработчик нажатия кнопки"""
@@ -49,6 +53,24 @@ class ModernButton(tk.Button):
     def on_release(self, event):
         """Обработчик отпускания кнопки"""
         self.config(relief='flat')
+    
+    def update_colors(self, new_bg=None, new_fg=None):
+        """
+        Обновляет цвета кнопки
+        
+        Args:
+            new_bg: Новый цвет фона
+            new_fg: Новый цвет текста
+        """
+        if new_bg is not None:
+            self.original_color = new_bg
+            if self.cget('bg') != self.hover_color:  # Не в состоянии наведения
+                self.config(bg=new_bg)
+        
+        if new_fg is not None:
+            self.original_fg = new_fg
+            if self.cget('fg') != config.COLORS['text']:  # Не в состоянии наведения
+                self.config(fg=new_fg)
 
 class CardFrame(tk.Frame):
     """Карточка с тенями и скруглениями"""

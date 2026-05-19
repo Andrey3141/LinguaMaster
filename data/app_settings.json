@@ -1,9 +1,9 @@
 {
-  "language": "en",
-  "native_language": "ru",
+  "language": "ru",
+  "native_language": "zh",
   "difficulty": "all",
-  "current_category": null,
-  "learning_method": "image",
+  "current_category": "Изучение китайского",
+  "learning_method": "manual",
   "app_settings": {
     "default_language": "en",
     "native_language": "ru",
@@ -18,12 +18,12 @@
     "volume": 100,
     "speed": 2.0,
     "selected_voices": {
-      "ru": "anna",
+      "ru": "aleksandr",
       "en": "en-US-JennyNeural",
       "es": "es-ES-ElviraNeural",
       "fr": "fr-FR-DeniseNeural",
       "de": "de-DE-KatjaNeural",
-      "zh": "zh-CN-XiaoxiaoNeural",
+      "zh": "zh-CN-YunxiNeural",
       "ja": "ja-JP-NanamiNeural",
       "ko": "ko-KR-SunHiNeural",
       "pt": "pt-BR-FranciscaNeural",

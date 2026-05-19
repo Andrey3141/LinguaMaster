@@ -277,7 +277,11 @@ class TrainingPanel:
         native_lang = self.controller.native_language
         
         if self.current_word_obj['language'] == study_lang and self.current_word_obj['native_language'] == native_lang:
-            correct_answer = self.current_word_obj['translation']
+            # Получаем список переводов
+            if 'translations' in self.current_word_obj and self.current_word_obj['translations']:
+                correct_answer = ', '.join(self.current_word_obj['translations'])
+            else:
+                correct_answer = self.current_word_obj.get('translation', '')
         else:
             correct_answer = self.current_word_obj['foreign']
         

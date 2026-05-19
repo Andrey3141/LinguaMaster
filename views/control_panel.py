@@ -1,3 +1,4 @@
+# файл: views/control_panel.py
 """
 Панель управления
 """
@@ -19,6 +20,8 @@ class ControlPanel:
         self.parent = parent
         self.controller = controller
         self.button_active = {}  # Словарь для отслеживания состояния кнопок
+        self.actions = []  # Список действий для кнопок
+        self.buttons = []  # Список созданных кнопок
         
         self.create_widgets()
     
@@ -46,19 +49,21 @@ class ControlPanel:
     
     def create_action_buttons(self):
         """Создание кнопок действий"""
-        actions = [
+        self.actions = [
             {"text": "Добавить слово", "icon": "➕", "command": self.controller.add_word_dialog, "color": config.COLORS['primary']},
             {"text": "Показать словарь", "icon": "📖", "command": self.controller.show_vocabulary, "color": config.COLORS['accent']},
             {"text": "Настройки", "icon": "⚙️", "command": self.controller.show_settings_dialog, "color": config.COLORS['warning']},
             {"text": "Обновить список", "icon": "🔄", "command": self.controller.refresh_words, "color": config.COLORS['success']},
-            {"text": "Задания для тренировки", "icon": "🎓", "command": self.controller.show_learning_method, "color": config.COLORS['secondary']},  # ← НОВАЯ КНОПКА
+            {"text": "Задания для тренировки", "icon": "🎓", "command": self.controller.show_learning_method, "color": config.COLORS['secondary']},
             {"text": "Сложные слова", "icon": "🎯", "command": self.controller.show_hard_words, "color": config.COLORS['warning']},
             {"text": "Статистика", "icon": "📊", "command": self.controller.show_detailed_stats, "color": config.COLORS['text_secondary']},
             {"text": "Быстрая тренировка", "icon": "⚡", "command": self.controller.quick_training, "color": config.COLORS['danger']},
             {"text": "Сменить язык", "icon": "🌐", "command": self.controller.change_language_dialog, "color": config.COLORS['primary']}
         ]
         
-        for i, action in enumerate(actions):
+        self.buttons = []  # Очищаем список кнопок
+        
+        for i, action in enumerate(self.actions):
             btn = tk.Button(
                 self.main_frame,
                 text=f"{action['icon']} {action['text']}",
@@ -75,15 +80,34 @@ class ControlPanel:
             )
             btn.pack(fill=tk.X, pady=5)
             
-            # Простая привязка событий
-            original_bg = config.COLORS['bg_dark']
-            original_fg = action['color']
+            # Сохраняем исходный цвет текста в атрибут кнопки
+            btn._original_fg = action['color']
+            btn._original_bg = config.COLORS['bg_dark']
             
+            # Привязываем события с использованием сохранённых цветов
             btn.bind('<Enter>', lambda e, b=btn: b.config(bg=config.COLORS['primary'], fg=config.COLORS['text']))
-            btn.bind('<Leave>', lambda e, b=btn: b.config(bg=original_bg, fg=original_fg))
+            btn.bind('<Leave>', lambda e, b=btn: b.config(bg=b._original_bg, fg=b._original_fg))
             
             # Инициализируем состояние кнопки
             self.button_active[f"btn_{i}"] = False
+            self.buttons.append(btn)
+    
+    def update_button_colors(self):
+        """
+        Обновляет цвета кнопок на основе текущих action['color']
+        Вызывается после смены языка или других обновлений интерфейса
+        """
+        for i, (btn, action) in enumerate(zip(self.buttons, self.actions)):
+            # Получаем актуальный цвет из action
+            new_color = action['color']
+            
+            # Обновляем сохранённый исходный цвет кнопки
+            btn._original_fg = new_color
+            
+            # Обновляем текущий цвет, если кнопка не в состоянии наведения
+            # Проверяем, что кнопка не подсвечена (не белая)
+            if btn.cget('fg') != config.COLORS['text']:
+                btn.config(fg=new_color)
     
     def create_button_handler(self, command, btn_id):
         """Создает обработчик для кнопки с защитой от двойного нажатия"""

@@ -1,3 +1,4 @@
+# models/vocabulary.py (полный файл с изменениями)
 """
 Модель словаря
 """
@@ -38,13 +39,20 @@ class VocabularyModel:
                 with open(file_path, 'r', encoding='utf-8') as f:
                     self.vocabulary = json.load(f)
                 
-                # Добавляем поле category для старых слов, если его нет
+                # Миграция старых слов в новый формат
                 for word in self.vocabulary:
                     if 'category' not in word:
                         word['category'] = "Основные"
-                    # Добавляем поле image для старых слов, если его нет
                     if 'image' not in word:
                         word['image'] = None
+                    # ===== НОВОЕ: миграция для множественных переводов =====
+                    if 'translation' in word and 'translations' not in word:
+                        # Конвертируем одиночный перевод в список
+                        word['translations'] = [word['translation']]
+                        # Удаляем старое поле, чтобы не путать
+                        # del word['translation']  # пока оставим для совместимости
+                    if 'translations' not in word:
+                        word['translations'] = []
                 
                 print(f"Загружено {len(self.vocabulary)} слов")
             except Exception as e:
@@ -184,14 +192,14 @@ class VocabularyModel:
         except Exception as e:
             print(f"Ошибка сохранения статистики: {e}")
     
-    # ========== ИЗМЕНЕНИЕ: добавлен параметр image ==========
-    def add_word(self, foreign, translation, language='en', native_language='ru', category="Основные", image=None):
+    # ===== ИЗМЕНЕНИЕ: поддержка множественных переводов =====
+    def add_word(self, foreign, translations, language='en', native_language='ru', category="Основные", image=None):
         """
         Добавляет новое слово в словарь
         
         Args:
             foreign: Иностранное слово
-            translation: Перевод
+            translations: Список переводов (или строка для обратной совместимости)
             language: Язык иностранного слова
             native_language: Родной язык
             category: Категория слова
@@ -202,7 +210,17 @@ class VocabularyModel:
         """
         # Сохраняем оригинальный регистр
         foreign = foreign.strip()
-        translation = translation.strip()
+        
+        # Обработка translations (может быть строка или список)
+        if isinstance(translations, str):
+            translations_list = [t.strip() for t in translations.split(',') if t.strip()]
+        elif isinstance(translations, list):
+            translations_list = [t.strip() for t in translations if t.strip()]
+        else:
+            translations_list = []
+        
+        if not foreign or not translations_list:
+            return False
         
         # Проверяем, нет ли уже такого слова
         for word in self.vocabulary:
@@ -214,11 +232,12 @@ class VocabularyModel:
         # Создаем новую запись
         new_word = {
             'foreign': foreign,
-            'translation': translation,
+            'translations': translations_list,
+            'translation': translations_list[0],  # Для обратной совместимости
             'language': language,
             'native_language': native_language,
             'category': category,
-            'image': image,  # ← НОВОЕ ПОЛЕ
+            'image': image,
             'added_date': str(date.today()),
             'last_review': None,
             'review_count': 0,
@@ -230,7 +249,41 @@ class VocabularyModel:
         self.vocabulary.append(new_word)
         self.save_vocabulary()
         return True
-    # ========== КОНЕЦ ИЗМЕНЕНИЯ ==========
+    
+    def get_translations(self, word):
+        """
+        Возвращает список переводов для слова
+        
+        Args:
+            word: Слово из словаря
+            
+        Returns:
+            list: Список переводов
+        """
+        if 'translations' in word and word['translations']:
+            return word['translations']
+        elif 'translation' in word:
+            return [word['translation']]
+        return []
+    
+    def check_translation(self, user_answer, correct_translations):
+        """
+        Проверяет, соответствует ли ответ пользователя одному из правильных переводов
+        
+        Args:
+            user_answer: Ответ пользователя
+            correct_translations: Список правильных переводов
+            
+        Returns:
+            bool: Правильно ли
+        """
+        user_lower = user_answer.lower().strip()
+        for trans in correct_translations:
+            if user_lower == trans.lower():
+                return True
+        return False
+    
+    # ===== КОНЕЦ ИЗМЕНЕНИЯ =====
     
     def get_random_word(self, difficulty='all', language='en', native_language='ru', prevent_repeats=True, category=None):
         """
@@ -315,13 +368,21 @@ class VocabularyModel:
         else:
             study_lang, native_lang = 'en', 'ru'
         
+        # ===== ИЗМЕНЕНИЕ: поддержка множественных переводов =====
         if study_lang == self.current_word['language'] and native_lang == self.current_word['native_language']:
-            correct = self.current_word['translation'].lower()
+            # Вопрос: иностранное слово → нужно дать перевод(ы)
+            correct_translations = self.get_translations(self.current_word)
+            # Для отображения правильного ответа берем первый перевод через запятую
+            correct_display = ', '.join(correct_translations)
         else:
-            correct = self.current_word['foreign'].lower()
+            # Вопрос: перевод → нужно дать иностранное слово
+            correct_word = self.current_word['foreign']
+            correct_translations = [correct_word]
+            correct_display = correct_word
         
-        user = user_answer.lower()
-        is_correct = user == correct
+        user = user_answer.lower().strip()
+        is_correct = self.check_translation(user, correct_translations)
+        # ===== КОНЕЦ ИЗМЕНЕНИЯ =====
         
         if is_correct:
             self.current_word['correct_count'] += 1
@@ -337,7 +398,7 @@ class VocabularyModel:
         self.save_vocabulary()
         self.save_stats()
         
-        return is_correct, correct
+        return is_correct, correct_display
     
     def get_stats(self):
         """
@@ -430,12 +491,15 @@ class VocabularyModel:
             if word['language'] == display_language:
                 return word['foreign']
             elif word['native_language'] == display_language:
-                return word['translation']
+                # ===== ИЗМЕНЕНИЕ: возвращаем первый перевод =====
+                translations = self.get_translations(word)
+                return translations[0] if translations else word.get('translation', '')
     
         if study_lang == word['language'] and native_lang == word['native_language']:
             return word['foreign']
         elif study_lang == word['native_language'] and native_lang == word['language']:
-            return word['translation']
+            translations = self.get_translations(word)
+            return translations[0] if translations else word.get('translation', '')
         else:
             return word['foreign']
     
@@ -443,7 +507,8 @@ class VocabularyModel:
         return word['foreign']
     
     def get_display_translation(self, word):
-        return word['translation']
+        translations = self.get_translations(word)
+        return ', '.join(translations) if translations else word.get('translation', '')
     
     def get_all_words(self):
         """
